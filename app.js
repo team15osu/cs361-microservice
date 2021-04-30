@@ -1,6 +1,5 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const cheerio = require('cheerio');
 
 const { errorHandler } = require("./controllers/error");
 const routes = require("./routes/index");
