@@ -11,7 +11,7 @@ function onlyUnique(value, index, self) {
 }
 
 const getDolla = async (url) => {
-    const res = await got(url)
+    const res = await got(url);
     return $ = cheerio.load(res.body);
 }
 
