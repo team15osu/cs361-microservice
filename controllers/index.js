@@ -2,19 +2,10 @@ const cheerio = require('cheerio');
 const got = require('got');
 var DOMParser = require('dom-parser');
 
-// const url = 'https://en.wikipedia.org/wiki/Global_Warming_(Sonny_Rollins_album)';
-// let links = [];
-// let d = {};
-
 // https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates
 function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
 }
-
-// const getDolla = async (url) => {
-//     const res = await got(url);
-//     return $ = cheerio.load(res.body);
-// }
 
 const getTitle = (req, data) => {
     const $ = cheerio.load(req.body);
@@ -28,7 +19,6 @@ const getTitle = (req, data) => {
 
 const getLinks = (req) => {
     let links = [];
-    //const $ = await getDolla(url)
     const $ = cheerio.load(req.body);
     $('a').each((i, parent) => {
         links.push(parent.attribs.href);
@@ -43,7 +33,6 @@ const filterArticleLinks = (links) => {
     })
 
     // https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates
-    // remove duplicates
     filtered_links = filtered_links.filter(onlyUnique)
     return filtered_links.map((link) => {
         return "https://en.wikipedia.org" + link;
@@ -61,18 +50,26 @@ const filterOtherLinks = (links) => {
 }
 
 const getText = (req) => {
-    headers = [];
-    // //const $ = await getDolla(url)
-    // $('.mw-headline').each((i, parent) => {
-    //     let id = "#" + parent.attribs.id + "p";
-    //     headers.push(parent.attribs.id);
-    // })
-
     const $ = cheerio.load(req.body)
-    // https://stackoverflow.com/questions/31543451/cheerio-extract-text-from-html-with-separators 
-    return $('p').contents().map(function () {
-        return (this.type === 'text') ? $(this).text() + ' ' : '';
-    }).get().join('');
+
+    //source: https://stackoverflow.com/questions/37217791/using-cherrio-to-select-text-from-paragraph-tags-p-with-no-class
+    let text = [];
+    $('p').each(function (i, el) {
+        text[i] = $(this).text()
+    });
+
+
+
+    return text.filter((sentence) => {
+        if (sentence.length !== 0) {
+            return sentence;
+        }
+    });
+
+    // // https://stackoverflow.com/questions/31543451/cheerio-extract-text-from-html-with-separators 
+    // return $('p').contents().map(function () {
+    //     return (this.type === 'text') ? $(this).text() + ' ' : '';
+    // }).get().join('');
 }
 
 const getData = (req) => {
@@ -89,7 +86,6 @@ const getData = (req) => {
 
 const postBody = async (req, res, next) => {
     const data = getData(req);
-    console.log(data);
     res.status(201).json({ ...data });
 };
 
