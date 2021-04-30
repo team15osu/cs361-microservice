@@ -1,6 +1,6 @@
 const cheerio = require('cheerio');
 
-// https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates
+// source: https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates
 function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
 }
@@ -49,9 +49,9 @@ const getText = ($) => {
         text[i] = $(this).text()
     });
 
-    return text.filter((sentence) => {
-        if (sentence.length !== 0) {
-            return sentence;
+    return text.filter((txt) => {
+        if (txt.length !== 0) {
+            return txt;
         }
     });
 }
