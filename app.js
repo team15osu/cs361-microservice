@@ -1,18 +1,17 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cheerio = require('cheerio');
-const got = require('got');
 
+const { errorHandler } = require("./controllers/error");
 const routes = require("./routes/index");
 
 const app = express();
 app.enable("trust proxy");
 
-app.use(bodyParser.text({ type: 'text/html' }))
+app.use(bodyParser.text())
 app.use("/", routes);
 
-//const url = 'https://en.wikipedia.org/wiki/Claude_Mandil';
-//const response = await got(url);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

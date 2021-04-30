@@ -1,29 +1,23 @@
 const cheerio = require('cheerio');
-const got = require('got');
-var DOMParser = require('dom-parser');
 
 // https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates
 function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
 }
 
-const getTitle = (req, data) => {
-    const $ = cheerio.load(req.body);
+const getTitle = ($) => {
     let title = ''
     $('h1').each((i, parent) => {
         title = parent.children[0].data;
     })
-
     return title;
 }
 
-const getLinks = (req) => {
+const getLinks = ($) => {
     let links = [];
-    const $ = cheerio.load(req.body);
     $('a').each((i, parent) => {
         links.push(parent.attribs.href);
     })
-
     return links;
 }
 
@@ -45,40 +39,50 @@ const filterOtherLinks = (links) => {
     })
 
     // https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates
-    // remove duplicates
     return filtered_links.filter(onlyUnique);
 }
 
-const getText = (req) => {
-    const $ = cheerio.load(req.body)
-
+const getText = ($) => {
     //source: https://stackoverflow.com/questions/37217791/using-cherrio-to-select-text-from-paragraph-tags-p-with-no-class
     let text = [];
     $('p').each(function (i, el) {
         text[i] = $(this).text()
     });
 
-
-
     return text.filter((sentence) => {
         if (sentence.length !== 0) {
             return sentence;
         }
     });
+}
 
-    // // https://stackoverflow.com/questions/31543451/cheerio-extract-text-from-html-with-separators 
-    // return $('p').contents().map(function () {
-    //     return (this.type === 'text') ? $(this).text() + ' ' : '';
-    // }).get().join('');
+const getImgs = ($) => {
+    //source: https://stackoverflow.com/questions/37217791/using-cherrio-to-select-text-from-paragraph-tags-p-with-no-class
+    let imgs = [];
+    $('img').each(function (i, el) {
+
+        imgs.push({ "src": $(this).attr('src'), "alt": $(this).attr('alt') });
+    });
+    return imgs;
+}
+
+const getCitations = ($) => {
+    //source: https://stackoverflow.com/questions/37217791/using-cherrio-to-select-text-from-paragraph-tags-p-with-no-class
+    let citations = [];
+    $('cite').each(function (i, el) {
+        citations.push($(this).text());
+    });
+    return citations;
 }
 
 const getData = (req) => {
+    const $ = cheerio.load(req.body);
     let data = {}
-    var xmlString = req.body;
-    var doc = new DOMParser().parseFromString(xmlString, "text/xml");
-    data['title'] = getTitle(req, data);
-    data['text'] = getText(req);
-    const links = getLinks(req);
+    const links = getLinks($);
+    data['title'] = getTitle($);
+    data['text'] = getText($);
+    data['imgs'] = getImgs($);
+    data['citations'] = getCitations($);
     data['article_links'] = filterArticleLinks(links);
     data['other_links'] = filterOtherLinks(links);
     return data;
