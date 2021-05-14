@@ -1,4 +1,4 @@
-# EXAMPLE OF USE
+# EXAMPLE OF USE IN NODE.JS EXPRESS SERVER
 
 ```js
 // Get article html from scraper microservice
