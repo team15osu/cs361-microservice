@@ -7,7 +7,7 @@ const routes = require("./routes/index");
 const app = express();
 app.enable("trust proxy");
 
-app.use(bodyParser.text({ limit: "50mb" }));
+app.use(bodyParser.text({ type: "text/html", limit: "50mb" }));
 app.use("/", routes);
 
 app.use(errorHandler);
