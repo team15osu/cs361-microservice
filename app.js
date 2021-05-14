@@ -7,12 +7,12 @@ const routes = require("./routes/index");
 const app = express();
 app.enable("trust proxy");
 
-app.use(bodyParser.text())
+app.use(bodyParser.text({ limit: "50mb" }));
 app.use("/", routes);
 
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}...`);
+  console.log(`Server listening on port ${PORT}...`);
 });
